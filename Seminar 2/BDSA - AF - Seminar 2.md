@@ -1140,7 +1140,7 @@ export const authenticate = (req, res, next) => {
         throw new HttpError(401, "Token invalid sau expirat");
     }
 
-    req.user = { id: payload.userId, role: payload.role };
+    req.user = { id: payload.id, role: payload.role };
 
     next();
 }
@@ -1288,7 +1288,7 @@ model User {
 
 model Product {
     // ... campurile existente ...
-    orderLine OrderLine[]
+    orderLines OrderLine[]
 }
 ```
 
@@ -1464,7 +1464,7 @@ router.post("/", authenticate, async (req, res) => {
         }
 
         let total = 0;
-        const orderLine = [];
+        const orderLines = [];
 
         for (const product of products) {
             const quantity = quantities.get(product.id);
@@ -1481,7 +1481,7 @@ router.post("/", authenticate, async (req, res) => {
 
             total += product.price * quantity;
 
-            orderLine.push({
+            orderLines.push({
                 productId: product.id,
                 quantity,
                 unitPrice: product.price
@@ -1492,7 +1492,7 @@ router.post("/", authenticate, async (req, res) => {
             data: {
                 userId: req.user.id,
                 total: Math.round(total * 100) / 100,
-                orderLines: { create: orderLine }
+                orderLines: { create: orderLines }
             },
             include: orderInclude
         });
